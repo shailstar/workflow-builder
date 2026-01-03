@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useGraphStore } from '@/stores/graph.store'
+import { nodeSchemas } from '@/config/nodeSchemas'
 
 const graph = useGraphStore()
 
@@ -15,15 +16,51 @@ function updateConfig(key: string, value: any) {
         [key]: value,
     })
 }
+
+const schema = computed(() => {
+    if (!selectedNode.value) return []
+    return nodeSchemas[selectedNode.value.subType] || []
+})
+
+const isValid = computed(() => {
+    if (!selectedNode.value) return false
+
+    return schema.value.every(field => {
+        if (!field.required) return true
+        const value = selectedNode.value?.data.config[field.key]
+        return value !== undefined && value !== ''
+    })
+})
+
 </script>
 
 <template>
     <div v-if="selectedNode"
-        :style="{ position: 'absolute', top: '40px', right: '10px', display: 'flex', gap: '10px', zIndex: '100' }"
-        style="background: white; color: black">
+        :style="{ position: 'absolute', top: '40px', right: '10px', display: 'flex', 'flex-direction': 'column', gap: '10px', zIndex: '100' }"
+        style="background: white; color: black; padding: 10px">
         <h3>{{ selectedNode.data.label }}</h3>
 
-        <!-- placeholder -->
-        <p>Config panel coming here</p>
+        <div v-for="field in schema" :key="field.key" style="display: flex; flex-direction: column;">
+            <label>{{ field.label }}</label>
+
+            <input v-if="field.type === 'text'" :value="selectedNode.data.config[field.key] || ''"
+                @input="updateConfig(field.key, ($event.target as HTMLInputElement).value)" />
+
+            <select v-if="field.type === 'select'" :value="selectedNode.data.config[field.key] || ''"
+                @change="updateConfig(field.key, ($event.target as HTMLSelectElement).value)">
+                <option disabled value="">Select</option>
+                <option v-for="opt in field.options" :key="opt" :value="opt">
+                    {{ opt }}
+                </option>
+            </select>
+        </div>
+
+        <button :disabled="!isValid">
+            Save
+        </button>
+
+        <p v-if="!isValid" style="color: red;">
+            Please fill all required fields
+        </p>
     </div>
 </template>

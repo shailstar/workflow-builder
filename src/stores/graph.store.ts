@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import type { GraphNode, GraphEdge } from '@/types/graph'
 import { produce } from 'immer'
 import { useHistoryStore } from '@/stores/history.store'
+import { saveWorkflow, loadWorkflow } from '@/utils/persistence'
 
 export const useGraphStore = defineStore('graph', {
     state: () => ({
@@ -21,6 +22,8 @@ export const useGraphStore = defineStore('graph', {
                 nodes: this.nodes,
                 edges: this.edges,
             })
+
+            this.persist()
         },
 
         selectNode(nodeId: string | null) {
@@ -33,6 +36,7 @@ export const useGraphStore = defineStore('graph', {
         selectEdge(edgeId: string | null) {
             this.selectedEdgeId = edgeId
             this.selectedNodeId = null
+            console.log('edgeId', edgeId)
         },
 
         updateNodePosition(id: string, position: { x: number; y: number }) {
@@ -45,11 +49,15 @@ export const useGraphStore = defineStore('graph', {
                 nodes: this.nodes,
                 edges: this.edges,
             })
+
+            this.persist()
         },
 
         applySnapshot(snapshot: { nodes: GraphNode[]; edges: GraphEdge[] }) {
             this.nodes = snapshot.nodes
             this.edges = snapshot.edges
+
+            this.persist()
         },
 
         addEdge(edge: GraphEdge) {
@@ -63,6 +71,8 @@ export const useGraphStore = defineStore('graph', {
                 nodes: this.nodes,
                 edges: this.edges,
             })
+
+            this.persist()
         },
 
         getOutgoingEdges(nodeId: string) {
@@ -105,6 +115,7 @@ export const useGraphStore = defineStore('graph', {
 
             useHistoryStore().record({ nodes: this.nodes, edges: this.edges })
         },
+
         updateNodeConfig(nodeId: string, config: Record<string, any>) {
             this.nodes = produce(this.nodes, draft => {
                 const node = draft.find(n => n.id === nodeId)
@@ -114,6 +125,13 @@ export const useGraphStore = defineStore('graph', {
             })
 
             useHistoryStore().record({
+                nodes: this.nodes,
+                edges: this.edges,
+            })
+        },
+
+        persist() {
+            saveWorkflow({
                 nodes: this.nodes,
                 edges: this.edges,
             })

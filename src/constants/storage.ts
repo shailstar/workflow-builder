@@ -1,0 +1,1 @@
+export const WORKFLOW_STORAGE_KEY = 'workflow:v1'
