@@ -6,7 +6,7 @@ defineProps(['id', 'sourcePosition', 'targetPosition', 'data'])
 <template>
     <div class="node" :id="id">
         <!-- Incoming -->
-        <Handle type="target" :position="Position.Right"
+        <Handle type="target" :position="Position.Left"
             :style="{ height: '16px', width: '6px', background: 'white' }" />
 
         <div class="label" :style="{ color: 'black' }">
@@ -14,7 +14,7 @@ defineProps(['id', 'sourcePosition', 'targetPosition', 'data'])
         </div>
 
         <!-- Outgoing -->
-        <Handle type="source" :position="Position.Left" :style="{ height: '16px', width: '6px', background: 'red' }" />
+        <Handle type="source" :position="Position.Right" :style="{ height: '16px', width: '6px', background: 'red' }" />
     </div>
 </template>
 

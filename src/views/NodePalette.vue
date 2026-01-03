@@ -1,23 +1,8 @@
 <script setup lang="ts">
 import { useGraphStore } from '@/stores/graph.store'
-import { useHistoryStore } from '@/stores/history.store'
 import { NODE_REGISTRY } from '@/types/graph'
 
 const graph = useGraphStore()
-const history = useHistoryStore()
-
-function addTrigger() {
-  graph.addNode({
-    id: crypto.randomUUID(),
-    type: 'trigger',
-    subType: 'manual',
-    position: { x: 100, y: 100 },
-    data: {
-      label: 'Manual Trigger',
-      config: {},
-    },
-  })
-}
 
 function addNode(type: any, subType: any, label: string) {
   graph.addNode({
