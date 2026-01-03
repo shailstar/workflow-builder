@@ -1,1 +1,7 @@
 @import './base.css';
+
+.node-error {
+  border: 2px solid #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+}
+

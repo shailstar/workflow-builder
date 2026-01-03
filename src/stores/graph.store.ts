@@ -13,6 +13,8 @@ export const useGraphStore = defineStore('graph', {
     }),
     actions: {
         addNode(node: GraphNode) {
+            console.log('this.nodes', this.nodes, node)
+            console.log('this.edges', this.edges)
             this.nodes = produce(this.nodes, draft => {
                 draft.push(node)
             })
@@ -22,6 +24,9 @@ export const useGraphStore = defineStore('graph', {
                 nodes: this.nodes,
                 edges: this.edges,
             })
+
+            console.log('this.nodes', this.nodes)
+            console.log('this.edges', this.edges)
 
             this.persist()
         },
@@ -44,6 +49,7 @@ export const useGraphStore = defineStore('graph', {
                 const node = draft.find(n => n.id === id)
                 if (node) node.position = position
             })
+
             const history = useHistoryStore()
             history.record({
                 nodes: this.nodes,

@@ -2,11 +2,13 @@ import { defineStore } from 'pinia'
 import type { ExecutionStatus, NodeExecution } from '@/types/run'
 import { useGraphStore } from '@/stores/graph.store'
 import { validateWorkflow } from '@/domain/validators/workflow.validator'
+import type { ValidationError } from '@/types/validation'
 
 export const useRunStore = defineStore('run', {
     state: () => ({
         status: 'idle' as ExecutionStatus,
         executions: [] as NodeExecution[],
+        validationErrors: [] as ValidationError[],
     }),
 
     actions: {
@@ -15,10 +17,11 @@ export const useRunStore = defineStore('run', {
             const result = validateWorkflow(graph.nodes, graph.edges)
 
             if (!result.valid) {
-                this.status = 'failed'
-                console.error(result.errors)
+                this.setValidationErrors(result.errors)
                 return
             }
+
+            this.clearValidationErrors()
 
             this.reset()
             this.status = 'running'
@@ -55,6 +58,15 @@ export const useRunStore = defineStore('run', {
             for (const edge of outgoing) {
                 this.runNode(edge.target)
             }
+        },
+
+        setValidationErrors(errors: ValidationError[]) {
+            this.validationErrors = errors
+            this.status = 'failed'
+        },
+
+        clearValidationErrors() {
+            this.validationErrors = []
         },
     },
 })

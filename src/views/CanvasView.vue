@@ -5,9 +5,11 @@ import { Background } from '@vue-flow/background'
 import type { Connection } from '@vue-flow/core'
 import type { EdgeMouseEvent, NodeMouseEvent } from '@vue-flow/core'
 import BaseNode from '@/components/BaseNode.vue'
+import { useRunStore } from '@/stores/run.store'
+import { computed } from 'vue'
 
 
-
+const run = useRunStore()
 const graph = useGraphStore()
 
 function onNodeDragStop(event: any) {
@@ -38,7 +40,6 @@ function onNodeClick({ node }: NodeMouseEvent) {
   graph.selectNode(node.id)
 }
 
-
 function onEdgeClick({ edge }: EdgeMouseEvent) {
   graph.selectEdge(edge.id)
 }
@@ -47,11 +48,23 @@ function onPaneClick() {
   graph.selectNode(null)
   graph.selectEdge(null)
 }
+
+function isNodeInvalid(nodeId: string) {
+  return run.validationErrors.some(e => e.nodeId === nodeId)
+}
+
+const graphNodes = computed(() => {
+  return graph.nodes.map(n => ({
+    ...n,
+    class: isNodeInvalid(n.id) ? 'node-error' : ''
+  }))
+})
+
 </script>
 
 <template>
   <div style="width: 100vw; height: 100vh;">
-    <VueFlow :nodes="graph.nodes" :edges="graph.edges" :is-valid-connection="isValidConnection"
+    <VueFlow :nodes="graphNodes" :edges="graph.edges" :is-valid-connection="isValidConnection"
       @node-drag-stop="onNodeDragStop" @connect="onConnect" @edge-click="onEdgeClick" @node-click="onNodeClick"
       @pane-click="() => onPaneClick">
       <template #node-trigger="baseNodeProps">
