@@ -5,6 +5,7 @@ defineProps(['id', 'sourcePosition', 'targetPosition', 'data'])
 
 <template>
     <div class="node" :id="id" :class="{
+        'node--skipped': data.skipped,
         'node--executed': data.executed,
         'node--active': data.active,
     }">
@@ -37,5 +38,11 @@ defineProps(['id', 'sourcePosition', 'targetPosition', 'data'])
 .node--active {
     border: 2px solid #2563eb;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+}
+
+.node--skipped {
+    opacity: 0.4;
+    filter: grayscale(1);
+    border-style: dashed;
 }
 </style>

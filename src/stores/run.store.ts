@@ -3,7 +3,7 @@ import type { ExecutionStatus, ExecutionPlan, NodeExecution } from '@/types/run'
 import { useGraphStore } from '@/stores/graph.store'
 import { validateWorkflow } from '@/domain/validators/workflow.validator'
 import type { ValidationError } from '@/types/validation'
-import { createExecutionPlan } from '@/domain/run/createExecutionPlan'
+import { createExecutionPlan, evaluateCondition, type ConditionConfig } from '@/domain/run/createExecutionPlan'
 
 export const useRunStore = defineStore('run', {
     state: () => ({
@@ -12,6 +12,7 @@ export const useRunStore = defineStore('run', {
         validationErrors: [] as ValidationError[],
         plan: null as ExecutionPlan | null,
         currentIndex: 0,
+        skippedNodeIds: new Set<string>(),
     }),
 
     getters: {
@@ -23,7 +24,9 @@ export const useRunStore = defineStore('run', {
                 return state.executions[state.executions.length - 1]?.nodeId || null
             }
             return null
-        }
+        },
+
+        skippedNodeIdsArray: (state) => Array.from(state.skippedNodeIds),
 
     },
 
@@ -53,55 +56,57 @@ export const useRunStore = defineStore('run', {
         reset() {
             this.status = 'idle'
             this.executions = []
+            this.currentIndex = 0
+            this.plan = null
+            this.skippedNodeIds.clear()
         },
 
         executeNext() {
-            console.log('this.plan', this.plan)
             if (!this.plan) return
 
-            if (this.currentIndex >= this.plan.orderedNodeIds.length) {
-                this.status = 'completed'
-                return
-            }
-
-            const nodeId = this.plan.orderedNodeIds[this.currentIndex]
-
-            if (nodeId) {
-                this.executions.push({
-                    nodeId,
-                    state: 'running',
-                })
-            }
-
-            this.currentIndex++
-        },
-
-
-        execute() {
             const graph = useGraphStore()
 
-            // Step 1: find trigger nodes
-            const triggers = graph.nodes.filter(n => n.type === 'trigger')
+            console.log('this.currentIndex', this.currentIndex, this.plan.orderedNodeIds.length)
 
-            for (const trigger of triggers) {
-                this.runNode(trigger.id)
+            while (this.currentIndex < this.plan.orderedNodeIds.length) {
+                const nodeId = this.plan.orderedNodeIds[this.currentIndex]
+                this.currentIndex++
+
+                if (nodeId && this.skippedNodeIds.has(nodeId)) {
+                    continue // keep advancing
+                }
+
+                const node = graph.nodes.find(n => n.id === nodeId)
+
+                if (!node) continue
+
+                if (nodeId) {
+                    this.executions.push({
+                        nodeId,
+                        state: 'running',
+                    })
+                }
+
+                // Execute node
+
+
+                // Condition gating
+                if (node.type === 'logic' && node.subType === 'condition') {
+                    const result = evaluateCondition(node.data.config as ConditionConfig)
+                    const allowedLabel = result ? 'true' : 'false'
+
+                    const outgoing = graph.edges.filter(e => e.source === nodeId)
+                    for (const edge of outgoing) {
+                        if (edge.label !== allowedLabel) {
+                            this.markSubtreeSkipped(edge.target)
+                        }
+                    }
+                }
+
+                return // exactly ONE node executed per click
             }
 
             this.status = 'completed'
-        },
-
-        runNode(nodeId: string) {
-            this.executions.push({
-                nodeId,
-                state: 'success',
-            })
-
-            const graph = useGraphStore()
-            const outgoing = graph.edges.filter(e => e.source === nodeId)
-
-            for (const edge of outgoing) {
-                this.runNode(edge.target)
-            }
         },
 
         setValidationErrors(errors: ValidationError[]) {
@@ -112,5 +117,15 @@ export const useRunStore = defineStore('run', {
         clearValidationErrors() {
             this.validationErrors = []
         },
+
+        markSubtreeSkipped(nodeId: string) {
+            const graph = useGraphStore()
+            this.skippedNodeIds.add(nodeId)
+
+            const outgoing = graph.edges.filter(e => e.source === nodeId)
+            for (const edge of outgoing) {
+                this.markSubtreeSkipped(edge.target)
+            }
+        }
     },
 })

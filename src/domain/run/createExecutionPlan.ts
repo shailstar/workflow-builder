@@ -1,6 +1,12 @@
 import type { GraphNode, GraphEdge } from '@/types/graph'
 import type { ExecutionPlan } from '@/types/run'
 
+export interface ConditionConfig {
+    left: any
+    operator: '==' | '!=' | '>' | '<'
+    right: any
+}
+
 export function createExecutionPlan(
     nodes: GraphNode[],
     edges: GraphEdge[],
@@ -53,5 +59,22 @@ export function createExecutionPlan(
 
     return {
         orderedNodeIds,
+    }
+}
+
+export function evaluateCondition(config: ConditionConfig): boolean {
+    const { left, operator, right } = config
+
+    switch (operator) {
+        case '==':
+            return left == right
+        case '!=':
+            return left != right
+        case '>':
+            return Number(left) > Number(right)
+        case '<':
+            return Number(left) < Number(right)
+        default:
+            return false
     }
 }

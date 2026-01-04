@@ -59,6 +59,7 @@ const graphNodes = computed(() => {
     class: isNodeInvalid(node.id) ? 'node-error' : '',
     data: {
       ...node.data,
+      skipped: run.skippedNodeIdsArray.includes(node.id),
       executed: run.executedNodeIds.includes(node.id),
       active: run.activeNodeId === node.id,
     },

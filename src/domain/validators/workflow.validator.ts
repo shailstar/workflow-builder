@@ -86,6 +86,27 @@ export function validateWorkflow(
         }
     }
 
+
+    // V5: Condition config validity
+    nodes.forEach(n => {
+        if (n.type === 'logic' && n.subType === 'condition') {
+            const config = n.data?.config
+
+            if (
+                !config ||
+                config.left === undefined ||
+                config.right === undefined ||
+                !['==', '!=', '>', '<'].includes(config.operator)
+            ) {
+                errors.push({
+                    code: 'INVALID_CONDITION_CONFIG',
+                    message: 'Condition node has invalid or incomplete configuration',
+                    nodeId: n.id,
+                })
+            }
+        }
+    })
+
     return {
         valid: errors.length === 0,
         errors,

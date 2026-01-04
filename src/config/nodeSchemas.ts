@@ -36,6 +36,24 @@ export const nodeSchemas: Record<string, FieldSchema[]> = {
     ],
 
     condition: [
-        { key: 'expression', label: 'Expression', type: 'text', required: true },
+        {
+            key: 'left',
+            label: 'Left Operand',
+            type: 'text',
+            required: true,
+        },
+        {
+            key: 'operator',
+            label: 'Operator',
+            type: 'select',
+            required: true,
+            options: ['==', '!=', '>', '<'],
+        },
+        {
+            key: 'right',
+            label: 'Right Operand',
+            type: 'text',
+            required: true,
+        },
     ],
 }
