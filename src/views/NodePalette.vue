@@ -24,7 +24,7 @@ function onDragStart(
 
       <div class="palette-items">
         <div v-for="(def, subType) in group" :key="subType" class="palette-item" draggable="true"
-          @dragstart="onDragStart($event, type, subType, def.label)">
+          :data-testid="`palette-node-${type}-${subType}`" @dragstart="onDragStart($event, type, subType, def.label)">
           <span class="palette-dot" />
           {{ def.label }}
         </div>
