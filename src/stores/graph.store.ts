@@ -24,6 +24,8 @@ export const useGraphStore = defineStore('graph', {
             })
 
             this.persist()
+
+            return node.id
         },
 
         deleteNode(nodeId: string) {
