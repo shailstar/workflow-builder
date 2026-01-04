@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VueFlow } from '@vue-flow/core'
+import { VueFlow, MarkerType } from '@vue-flow/core'
 import { useGraphStore } from '@/stores/graph.store'
 import { Background } from '@vue-flow/background'
 import type { Connection } from '@vue-flow/core'
@@ -25,8 +25,6 @@ function onNodeDragStop(event: any) {
   graph.updateNodePosition(id, position)
   isDraggingNode.value = false
 }
-
-
 
 function onConnect(params: Connection) {
   graph.addEdge({
@@ -119,11 +117,22 @@ const contextNode = computed(() =>
   graph.nodes.find(n => n.id === contextNodeId.value)
 )
 
+const graphEdges = computed(() => {
+  return graph.edges.map(edge => ({
+    ...edge,
+    markerEnd: MarkerType.Arrow,
+    class:
+      run.activeNodeId === edge.source
+        ? 'edge--active'
+        : '',
+  }))
+})
+
 </script>
 
 <template>
-  <div style="width: 100vw; height: 100vh;">
-    <VueFlow :nodes="graphNodes" :edges="graph.edges" :is-valid-connection="isValidConnection" @connect="onConnect"
+  <div class="canvas-root" style="width: 100vw; height: 100vh;">
+    <VueFlow :nodes="graphNodes" :edges="graphEdges" :is-valid-connection="isValidConnection" @connect="onConnect"
       @edge-click="onEdgeClick" @node-click="onNodeClick" @pane-click="onPaneClick"
       @node-context-menu="onNodeContextMenu" @edge-context-menu="onEdgeContextMenu" @edge-update="onEdgeUpdate"
       @node-drag-start="onNodeDragStart" @node-drag-stop="onNodeDragStop">
@@ -144,8 +153,17 @@ const contextNode = computed(() =>
         <button @click="duplicate">Duplicate</button>
         <button @click="remove">Delete</button>
       </div>
-      <Background pattern-color="#aaa" :gap="16" />
+      <Background variant="dots" :gap="24" :size="2" pattern-color="#334155" />
     </VueFlow>
 
   </div>
 </template>
+<style scoped>
+.canvas-root {
+  width: 100vw;
+  height: 100vh;
+  background:
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.02) 1px, transparent 0),
+    linear-gradient(180deg, #020617, #020617);
+}
+</style>

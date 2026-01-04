@@ -5,3 +5,75 @@
   box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
 }
 
+.vue-flow__handle {
+  width: 12px;
+  height: 12px;
+  background: #020617;
+  border: 2px solid #64748b;
+  border-radius: 50%;
+}
+
+.vue-flow__handle:hover {
+  border-color: #3b82f6;
+  background: #0f172a;
+}
+
+.vue-flow__edge-path {
+  stroke: #475569;
+  stroke-width: 2.2;
+}
+
+.vue-flow__edge.selected .vue-flow__edge-path {
+  stroke: #3b82f6;
+}
+
+.vue-flow__edge-path:hover {
+  stroke: #60a5fa;
+}
+
+.edge-true .vue-flow__edge-path {
+  stroke: #22c55e;
+}
+
+.edge-false .vue-flow__edge-path {
+  stroke: #ef4444;
+}
+
+.edge--active path {
+  stroke: #60a5fa;
+  stroke-width: 2.5;
+  stroke-dasharray: 6 6;
+  animation: edge-flow 1s linear infinite;
+
+  /* glow */
+  filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.8));
+}
+
+.vue-flow__edge path {
+  stroke: #0f4a9b;
+  stroke-width: 3;
+}
+
+
+@keyframes edge-flow {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edge--active path {
+    animation: none;
+    stroke-dasharray: none;
+  }
+}
+
+
+
+
+
+
+
