@@ -31,6 +31,52 @@ export const useGraphStore = defineStore('graph', {
             this.persist()
         },
 
+        deleteNode(nodeId: string) {
+            this.nodes = produce(this.nodes, draft => {
+                return draft.filter(n => n.id !== nodeId)
+            })
+
+            this.edges = produce(this.edges, draft => {
+                return draft.filter(
+                    e => e.source !== nodeId && e.target !== nodeId
+                )
+            })
+
+            const history = useHistoryStore()
+            history.record({
+                nodes: this.nodes,
+                edges: this.edges,
+            })
+        },
+
+        duplicateNode(nodeId: string) {
+            const node = this.nodes.find(n => n.id === nodeId)
+            if (!node) return
+
+            const duplicatedNode = {
+                ...node,
+                id: crypto.randomUUID(),
+                position: {
+                    x: node.position.x + 40,
+                    y: node.position.y + 40,
+                },
+                data: {
+                    ...node.data,
+                    config: { ...node.data.config },
+                },
+            }
+
+            this.nodes = produce(this.nodes, draft => {
+                draft.push(duplicatedNode)
+            })
+
+            const history = useHistoryStore()
+            history.record({
+                nodes: this.nodes,
+                edges: this.edges,
+            })
+        },
+
         selectNode(nodeId: string | null) {
             this.selectedNodeId = nodeId
             this.selectedEdgeId = null
@@ -79,6 +125,32 @@ export const useGraphStore = defineStore('graph', {
             })
 
             this.persist()
+        },
+
+        deleteEdge(edgeId: string) {
+            this.edges = produce(this.edges, draft =>
+                draft.filter(e => e.id !== edgeId)
+            )
+
+            const history = useHistoryStore()
+            history.record({
+                nodes: this.nodes,
+                edges: this.edges,
+            })
+        },
+
+        updateEdge(edgeId: string, updates: Partial<GraphEdge>) {
+            this.edges = produce(this.edges, draft => {
+                const edge = draft.find(e => e.id === edgeId)
+                if (!edge) return
+                Object.assign(edge, updates)
+            })
+
+            const history = useHistoryStore()
+            history.record({
+                nodes: this.nodes,
+                edges: this.edges,
+            })
         },
 
         getOutgoingEdges(nodeId: string) {
@@ -141,6 +213,18 @@ export const useGraphStore = defineStore('graph', {
                 nodes: this.nodes,
                 edges: this.edges,
             })
+        },
+
+        undo() {
+            const history = useHistoryStore()
+            history.undo()
+            this.applySnapshot(history.present!)
+        },
+
+        redo() {
+            const history = useHistoryStore()
+            history.redo()
+            this.applySnapshot(history.present!)
         }
     },
 })

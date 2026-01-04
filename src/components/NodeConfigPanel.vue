@@ -32,6 +32,16 @@ const isValid = computed(() => {
     })
 })
 
+function onDelete() {
+    if (!selectedNode.value) return
+    graph.deleteNode(selectedNode.value.id)
+}
+
+function onDuplicate() {
+    if (!selectedNode.value) return
+    graph.duplicateNode(selectedNode.value.id)
+}
+
 </script>
 
 <template>
@@ -58,6 +68,13 @@ const isValid = computed(() => {
         <button :disabled="!isValid">
             Save
         </button>
+
+        <div style="display: flex; gap: 8px; margin-top: 12px;">
+            <button @click="onDuplicate">Duplicate</button>
+            <button @click="onDelete" style="color: red;">
+                Delete
+            </button>
+        </div>
 
         <p v-if="!isValid" style="color: red;">
             Please fill all required fields

@@ -8,13 +8,11 @@ const history = useHistoryStore()
 const run = useRunStore()
 
 function historyUndo() {
-    history.undo()
-    graph.applySnapshot(history.present!)
+    graph.undo()
 }
 
 function historyRedo() {
-    history.redo()
-    graph.applySnapshot(history.present!)
+    graph.redo()
 }
 
 function onRunClick() {
