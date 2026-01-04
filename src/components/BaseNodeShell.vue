@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Handle, Position } from '@vue-flow/core'
 defineProps<{
     id: string
     data: any
@@ -9,25 +8,21 @@ defineProps<{
 
 <template>
     <div class="node" :id="id" :class="{
-        'node--skipped': data.skipped,
-        'node--executed': data.executed,
-        'node--active': data.active,
         'node--selected': selected,
-        'node--error': data.error
+        'node--active': data.active,
+        'node--executed': data.executed,
+        'node--skipped': data.skipped,
+        'node--error': data.error,
     }">
         <div class="node-header">
-            <span class="node-dot"></span>
-            <span class="node-title">{{ data.label }}</span>
+            <span class="node-dot" />
+            <span class="node-title">
+                <slot name="title" />
+            </span>
         </div>
-        <!-- Incoming -->
-        <Handle type="target" :position="Position.Left" />
 
-        <!-- <div class="label" :style="{ color: 'black' }">
-            {{ data.label }}
-        </div> -->
-
-        <!-- Outgoing -->
-        <Handle type="source" :position="Position.Right" />
+        <!-- Handles injected by child -->
+        <slot />
     </div>
 </template>
 
@@ -50,7 +45,6 @@ defineProps<{
         border-color 120ms ease;
 }
 
-/* Header */
 .node-header {
     display: flex;
     align-items: center;
@@ -74,12 +68,9 @@ defineProps<{
         0 0 40px rgba(59, 130, 246, 0.3);
 }
 
-/* Active (currently executing) */
+/* Active */
 .node--active {
     border-color: #2563eb;
-    box-shadow:
-        0 0 0 3px rgba(37, 99, 235, 0.6),
-        0 0 50px rgba(37, 99, 235, 0.45);
     animation: pulse-glow 1.6s ease-out infinite;
 }
 
@@ -100,10 +91,10 @@ defineProps<{
     border-style: dashed;
 }
 
+/* Error */
 .node--error {
-    border: 2px solid #ef4444;
-    background: #fee2e2;
-    color: #a41c1c
+    border-color: #ef4444;
+    background: #2a0404;
 }
 
 .node--error .node-dot {
@@ -127,15 +118,6 @@ defineProps<{
         box-shadow:
             0 0 0 0 rgba(37, 99, 235, 0),
             0 0 20px rgba(37, 99, 235, 0.5);
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .node--active {
-        animation: none;
-        box-shadow:
-            0 0 0 3px rgba(37, 99, 235, 0.6),
-            0 0 30px rgba(37, 99, 235, 0.4);
     }
 }
 </style>

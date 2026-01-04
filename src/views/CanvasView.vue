@@ -4,11 +4,13 @@ import { useGraphStore } from '@/stores/graph.store'
 import { Background } from '@vue-flow/background'
 import type { Connection } from '@vue-flow/core'
 import type { EdgeMouseEvent, NodeMouseEvent } from '@vue-flow/core'
-import BaseNode from '@/components/BaseNode.vue'
 import { useRunStore } from '@/stores/run.store'
 import { computed, ref } from 'vue'
-import RunController from './RunController.vue';
+import RunController from '../components/RunController.vue';
 import { MiniMap } from '@vue-flow/minimap'
+import TriggerNode from '@/components/TriggerNode.vue'
+import ActionNode from '@/components/ActionNode.vue'
+import LogicNode from '@/components/LogicNode.vue'
 
 
 const run = useRunStore()
@@ -194,14 +196,17 @@ const graphEdges = computed(() => {
       @node-context-menu="onNodeContextMenu" @edge-context-menu="onEdgeContextMenu" @edge-update="onEdgeUpdate"
       @node-drag-start="onNodeDragStart" @node-drag-stop="onNodeDragStop" @dragover="onDragOver" @drop="onDrop">
       <template #node-trigger="baseNodeProps">
-        <BaseNode v-bind="baseNodeProps" />
+        <TriggerNode v-bind="baseNodeProps" />
       </template>
+
       <template #node-action="baseNodeProps">
-        <BaseNode v-bind="baseNodeProps" />
+        <ActionNode v-bind="baseNodeProps" />
       </template>
+
       <template #node-logic="baseNodeProps">
-        <BaseNode v-bind="baseNodeProps" />
+        <LogicNode v-bind="baseNodeProps" />
       </template>
+
       <RunController />
       <MiniMap :node-color="(n: any) => {
         if (n.type === 'trigger') return '#22c55e'
