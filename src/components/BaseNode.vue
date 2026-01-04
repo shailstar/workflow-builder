@@ -4,7 +4,10 @@ defineProps(['id', 'sourcePosition', 'targetPosition', 'data'])
 </script>
 
 <template>
-    <div class="node" :id="id">
+    <div class="node" :id="id" :class="{
+        'node--executed': data.executed,
+        'node--active': data.active,
+    }">
         <!-- Incoming -->
         <Handle type="target" :position="Position.Left"
             :style="{ height: '16px', width: '6px', background: 'white' }" />
@@ -24,5 +27,15 @@ defineProps(['id', 'sourcePosition', 'targetPosition', 'data'])
     border: 1px solid #999;
     border-radius: 6px;
     background: white;
+}
+
+.node--executed {
+    border: 2px solid #22c55e;
+    background: #f0fdf4;
+}
+
+.node--active {
+    border: 2px solid #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
 }
 </style>

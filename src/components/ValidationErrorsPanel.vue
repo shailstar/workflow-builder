@@ -6,7 +6,8 @@ const run = useRunStore()
 
 <template>
     <div v-if="run.validationErrors.length" class="p-4"
-        :style="{ position: 'absolute', bottom: '40px', right: '10px', display: 'flex', 'flex-direction': 'column', gap: '10px', zIndex: '100' }">
+        :style="{ position: 'absolute', bottom: '40px', right: '10px', display: 'flex', 'flex-direction': 'column', gap: '10px', zIndex: '100' }"
+        style="background: white; color: black; padding: 10px">
         <h3 class="text-red-600 font-semibold mb-2">
             Workflow Errors
         </h3>

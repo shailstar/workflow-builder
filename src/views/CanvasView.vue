@@ -54,11 +54,18 @@ function isNodeInvalid(nodeId: string) {
 }
 
 const graphNodes = computed(() => {
-  return graph.nodes.map(n => ({
-    ...n,
-    class: isNodeInvalid(n.id) ? 'node-error' : ''
+  return graph.nodes.map(node => ({
+    ...node,
+    class: isNodeInvalid(node.id) ? 'node-error' : '',
+    data: {
+      ...node.data,
+      executed: run.executedNodeIds.includes(node.id),
+      active: run.activeNodeId === node.id,
+    },
   }))
 })
+
+
 
 </script>
 

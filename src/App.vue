@@ -13,10 +13,10 @@ import ValidationErrorsPanel from './components/ValidationErrorsPanel.vue';
 const graph = useGraphStore()
 
 onMounted(() => {
-  const snapshot = loadWorkflow()
-  if (snapshot) {
-    graph.applySnapshot(snapshot)
-  }
+  // const snapshot = loadWorkflow()
+  // if (snapshot) {
+  //   graph.applySnapshot(snapshot)
+  // }
 })
 </script>
 

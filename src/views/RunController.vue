@@ -20,6 +20,10 @@ function historyRedo() {
 function onRunClick() {
     run.start()
 }
+
+function onNextStepClick() {
+    run.executeNext()
+}
 </script>
 
 <template>
@@ -27,5 +31,6 @@ function onRunClick() {
         <button @click="historyUndo">Undo</button>
         <button @click="historyRedo">Redo</button>
         <button @click="onRunClick">Run</button>
+        <button @click="onNextStepClick">Next Step</button>
     </div>
 </template>
