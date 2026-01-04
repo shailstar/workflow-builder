@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VueFlow, MarkerType } from '@vue-flow/core'
+import { VueFlow, MarkerType, useVueFlow } from '@vue-flow/core'
 import { useGraphStore } from '@/stores/graph.store'
 import { Background } from '@vue-flow/background'
 import type { Connection } from '@vue-flow/core'
@@ -7,10 +7,55 @@ import type { EdgeMouseEvent, NodeMouseEvent } from '@vue-flow/core'
 import BaseNode from '@/components/BaseNode.vue'
 import { useRunStore } from '@/stores/run.store'
 import { computed, ref } from 'vue'
+import RunController from './RunController.vue';
+import { MiniMap } from '@vue-flow/minimap'
 
 
 const run = useRunStore()
 const graph = useGraphStore()
+
+const GRID_SIZE = 16
+
+function onDragOver(event: DragEvent) {
+  event.preventDefault()
+  event.dataTransfer!.dropEffect = 'move'
+}
+
+function onDrop(event: DragEvent) {
+  event.preventDefault()
+
+  const raw = event.dataTransfer?.getData('application/node')
+  if (!raw) return
+
+  const { type, subType, label } = JSON.parse(raw)
+
+  const bounds = (
+    event.currentTarget as HTMLElement
+  ).getBoundingClientRect()
+
+  const rawPosition = {
+    x: event.clientX - bounds.left,
+    y: event.clientY - bounds.top,
+  }
+
+  const position = {
+    x: snapToGrid(rawPosition.x),
+    y: snapToGrid(rawPosition.y),
+  }
+
+  graph.addNode({
+    id: crypto.randomUUID(),
+    type,
+    subType,
+    position,
+    data: {
+      label,
+      config: {},
+    },
+  })
+}
+
+
 
 const isDraggingNode = ref(false)
 const contextNodeId = ref<string | null>(null)
@@ -99,6 +144,11 @@ function closeContextMenu() {
   contextNodeId.value = null
 }
 
+function snapToGrid(value: number) {
+  return Math.round(value / GRID_SIZE) * GRID_SIZE
+}
+
+
 
 const graphNodes = computed(() => {
   return graph.nodes.map(node => ({
@@ -118,24 +168,30 @@ const contextNode = computed(() =>
 )
 
 const graphEdges = computed(() => {
-  return graph.edges.map(edge => ({
-    ...edge,
-    markerEnd: MarkerType.Arrow,
-    class:
-      run.activeNodeId === edge.source
-        ? 'edge--active'
-        : '',
-  }))
+  return graph.edges.map(edge => {
+    const isSkipped =
+      run.skippedNodeIdsArray.includes(edge.target)
+
+    return {
+      ...edge,
+      markerEnd: MarkerType.Arrow,
+      class: {
+        'edge--active': run.activeNodeId === edge.source,
+        'edge--skipped': isSkipped,
+      },
+    }
+  })
 })
 
 </script>
 
 <template>
   <div class="canvas-root" style="width: 100vw; height: 100vh;">
-    <VueFlow :nodes="graphNodes" :edges="graphEdges" :is-valid-connection="isValidConnection" @connect="onConnect"
+    <VueFlow :nodes="graphNodes" :edges="graphEdges" :is-valid-connection="isValidConnection" :zoom-on-scroll="true"
+      :pan-on-drag="true" :zoom-on-pinch="true" :min-zoom="0.2" :max-zoom="2" @connect="onConnect"
       @edge-click="onEdgeClick" @node-click="onNodeClick" @pane-click="onPaneClick"
       @node-context-menu="onNodeContextMenu" @edge-context-menu="onEdgeContextMenu" @edge-update="onEdgeUpdate"
-      @node-drag-start="onNodeDragStart" @node-drag-stop="onNodeDragStop">
+      @node-drag-start="onNodeDragStart" @node-drag-stop="onNodeDragStop" @dragover="onDragOver" @drop="onDrop">
       <template #node-trigger="baseNodeProps">
         <BaseNode v-bind="baseNodeProps" />
       </template>
@@ -145,6 +201,13 @@ const graphEdges = computed(() => {
       <template #node-logic="baseNodeProps">
         <BaseNode v-bind="baseNodeProps" />
       </template>
+      <RunController />
+      <MiniMap :node-color="(n: any) => {
+        if (n.type === 'trigger') return '#22c55e'
+        if (n.type === 'action') return '#3b82f6'
+        if (n.type === 'logic') return '#a855f7'
+        return '#64748b'
+      }" mask-color="rgba(0,0,0,0.4)" />
       <div v-if="contextNode && !isDraggingNode" class="context-menu" :style="{
         position: 'absolute',
         transform: `translate(${contextNode.position.x}px, ${contextNode.position.y - 40}px)`,

@@ -61,7 +61,6 @@ onUnmounted(() => {
 
 <template>
   <NodePalette />
-  <RunController />
   <CanvasView />
   <EdgeConfigPanel />
   <NodeConfigPanel />

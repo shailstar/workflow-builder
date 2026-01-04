@@ -54,6 +54,26 @@
   stroke-width: 3;
 }
 
+/* Skipped edge */
+.vue-flow__edge.edge--skipped path {
+  stroke: #475569;
+  stroke-dasharray: 6 6;
+  opacity: 0.35;
+}
+
+/* Disable interaction on skipped edges */
+.vue-flow__edge.edge--skipped {
+  pointer-events: none;
+}
+
+.vue-flow__edge.edge--active path {
+  stroke: #22d3ee;
+  stroke-width: 2.5;
+  opacity: 1;
+}
+
+
+
 
 @keyframes edge-flow {
   from {

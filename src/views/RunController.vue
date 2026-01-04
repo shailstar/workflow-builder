@@ -2,6 +2,9 @@
 import { useGraphStore } from '@/stores/graph.store'
 import { useHistoryStore } from '@/stores/history.store'
 import { useRunStore } from '@/stores/run.store'
+import { useVueFlow } from '@vue-flow/core'
+
+const { fitView } = useVueFlow()
 
 const graph = useGraphStore()
 const history = useHistoryStore()
@@ -22,6 +25,10 @@ function onRunClick() {
 function onNextStepClick() {
     run.executeNext()
 }
+
+function onFitView() {
+    fitView({ padding: 0.2 })
+}
 </script>
 
 <template>
@@ -30,5 +37,6 @@ function onNextStepClick() {
         <button @click="historyRedo">Redo</button>
         <button @click="onRunClick">Run</button>
         <button @click="onNextStepClick">Next Step</button>
+        <button @click="onFitView">Fit View</button>
     </div>
 </template>
