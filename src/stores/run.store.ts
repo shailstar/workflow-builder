@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import type { ExecutionStatus, ExecutionPlan, NodeExecution, ExecutionLog, NodeRunState } from '@/types/run'
+import type { ExecutionStatus, ExecutionPlan, NodeExecution, ExecutionLog, NodeRunState, NodeTaskResult } from '@/types/run'
+import type { GraphNode } from '@/types/graph'
 import { useGraphStore } from '@/stores/graph.store'
 import { validateWorkflow } from '@/domain/validators/workflow.validator'
 import type { ValidationError } from '@/types/validation'
@@ -69,8 +70,11 @@ export const useRunStore = defineStore('run', {
             this.skippedNodeIds.clear()
         },
 
-        executeNext() {
-            if (!this.plan) return true
+        async executeNext() {
+            // Guard: no plan or not running → do nothing
+            if (!this.plan || this.status !== 'running') {
+                return true
+            }
 
             const graph = useGraphStore()
 
@@ -84,7 +88,8 @@ export const useRunStore = defineStore('run', {
                 const node = graph.nodes.find(n => n.id === nodeId)
                 if (!node) continue
 
-                // ✅ Create execution AFTER all guards
+                /* ---------- Mark Node RUNNING ---------- */
+
                 const execution: NodeExecution = {
                     nodeId,
                     state: 'running',
@@ -95,9 +100,25 @@ export const useRunStore = defineStore('run', {
 
                 /* ---------------- Execute node ---------------- */
 
-                if (node.type === 'logic' && node.subType === 'condition') {
-                    const result = evaluateCondition(node.data.config as ConditionConfig)
-                    const allowedLabel = result ? 'true' : 'false'
+                const result = await this.executeNodeTask(node)
+
+                if (!result.success) {
+                    this.executions.forEach(e => {
+                        if (e.nodeId === nodeId) {
+                            e.state = 'error'
+                        }
+                    })
+                    this.pause()
+                    this.log(nodeId, 'error', result.message)
+                    return false
+                }
+
+                if (
+                    node.type === 'logic' &&
+                    node.subType === 'condition' &&
+                    typeof result.conditionResult === 'boolean'
+                ) {
+                    const allowedLabel = result.conditionResult ? 'true' : 'false'
 
                     const outgoing = graph.edges.filter(e => e.source === nodeId)
                     for (const edge of outgoing) {
@@ -107,9 +128,13 @@ export const useRunStore = defineStore('run', {
                     }
                 }
 
-                /* ---------------- Finish execution ---------------- */
+                /* ---------- Success ---------- */
 
-                execution.state = 'success'
+                this.executions.forEach(e => {
+                    if (e.nodeId === nodeId) {
+                        e.state = 'success'
+                    }
+                })
                 this.log(nodeId, 'success', 'Executed successfully')
 
                 return false // exactly ONE node per step
@@ -154,10 +179,13 @@ export const useRunStore = defineStore('run', {
 
             this.status = 'running'
 
-            this.playIntervalId = window.setInterval(() => {
-                if (this.status !== 'running') return
+            this.playIntervalId = setInterval(async () => {
+                if (this.status !== 'running') {
+                    this.pause()
+                    return
+                }
 
-                const finished = this.executeNext()
+                const finished = await this.executeNext()
 
                 if (finished) {
                     this.pause()
@@ -175,6 +203,34 @@ export const useRunStore = defineStore('run', {
                 this.status = 'paused'
             }
         },
+
+        executeNodeTask(node: any): Promise<NodeTaskResult> {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // ❌ Simulated failure
+                    if (node.type === 'action' && node.data.config?.simulateFail) {
+                        resolve({
+                            success: false,
+                            message: 'Action execution failed',
+                        })
+                        return
+                    }
+
+                    // 🔀 Condition node
+                    if (node.type === 'logic' && node.subType === 'condition') {
+                        const conditionResult = evaluateCondition(node.data.config)
+                        resolve({
+                            success: true,
+                            conditionResult,
+                        })
+                        return
+                    }
+
+                    // ✅ Normal success
+                    resolve({ success: true })
+                }, 800) // simulate async delay
+            })
+        }
 
 
     },

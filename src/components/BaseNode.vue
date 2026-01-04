@@ -13,6 +13,7 @@ defineProps<{
         'node--executed': data.executed,
         'node--active': data.active,
         'node--selected': selected,
+        'node--error': data.error
     }">
         <div class="node-header">
             <span class="node-dot"></span>
@@ -97,6 +98,16 @@ defineProps<{
     opacity: 0.35;
     filter: grayscale(1);
     border-style: dashed;
+}
+
+.node--error {
+    border: 2px solid #ef4444;
+    background: #fee2e2;
+    color: #a41c1c
+}
+
+.node--error .node-dot {
+    background: #ef4444;
 }
 
 @keyframes pulse-glow {

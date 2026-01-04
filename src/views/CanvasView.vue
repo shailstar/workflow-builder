@@ -148,8 +148,6 @@ function snapToGrid(value: number) {
   return Math.round(value / GRID_SIZE) * GRID_SIZE
 }
 
-
-
 const graphNodes = computed(() => {
   return graph.nodes.map(node => ({
     ...node,
@@ -157,8 +155,11 @@ const graphNodes = computed(() => {
     data: {
       ...node.data,
       skipped: run.skippedNodeIdsArray.includes(node.id),
-      executed: run.executedNodeIds.includes(node.id),
+      executed: run.executedNodeIds.includes(node.id) && run.activeNodeId !== node.id,
       active: run.activeNodeId === node.id,
+      error: run.executions.some(
+        e => e.nodeId === node.id && e.state === 'error'
+      ),
     },
   }))
 })

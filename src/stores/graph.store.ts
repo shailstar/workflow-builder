@@ -23,9 +23,6 @@ export const useGraphStore = defineStore('graph', {
                 edges: this.edges,
             })
 
-            console.log('this.nodes', this.nodes)
-            console.log('this.edges', this.edges)
-
             this.persist()
         },
 
@@ -78,14 +75,11 @@ export const useGraphStore = defineStore('graph', {
         selectNode(nodeId: string | null) {
             this.selectedNodeId = nodeId
             this.selectedEdgeId = null
-
-            console.log('nodeId', nodeId)
         },
 
         selectEdge(edgeId: string | null) {
             this.selectedEdgeId = edgeId
             this.selectedNodeId = null
-            console.log('edgeId', edgeId)
         },
 
         updateNodePosition(id: string, position: { x: number; y: number }) {

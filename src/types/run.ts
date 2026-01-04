@@ -67,3 +67,9 @@ export interface NodeExecution {
     nodeId: string
     state: NodeRunState
 }
+
+export interface NodeTaskResult {
+    success: boolean
+    message?: string
+    conditionResult?: boolean
+}

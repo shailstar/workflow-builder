@@ -22,6 +22,13 @@ export const nodeSchemas: Record<string, FieldSchema[]> = {
             options: ['GET', 'POST'],
             required: true,
         },
+        {
+            key: 'simulateFail',
+            label: 'Simulate Fail',
+            type: 'select',
+            required: true,
+            options: ['true', 'false'],
+        },
     ],
 
 
