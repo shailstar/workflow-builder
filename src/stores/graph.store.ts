@@ -13,8 +13,6 @@ export const useGraphStore = defineStore('graph', {
     }),
     actions: {
         addNode(node: GraphNode) {
-            console.log('this.nodes', this.nodes, node)
-            console.log('this.edges', this.edges)
             this.nodes = produce(this.nodes, draft => {
                 draft.push(node)
             })

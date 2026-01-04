@@ -58,6 +58,7 @@ function onEdgeClick({ edge }: EdgeMouseEvent) {
 function onPaneClick() {
   graph.selectNode(null)
   graph.selectEdge(null)
+  closeContextMenu()
 }
 
 function isNodeInvalid(nodeId: string) {
@@ -96,6 +97,10 @@ function onEdgeUpdate({ edge, connection }: any) {
   })
 }
 
+function closeContextMenu() {
+  contextNodeId.value = null
+}
+
 
 const graphNodes = computed(() => {
   return graph.nodes.map(node => ({
@@ -119,7 +124,7 @@ const contextNode = computed(() =>
 <template>
   <div style="width: 100vw; height: 100vh;">
     <VueFlow :nodes="graphNodes" :edges="graph.edges" :is-valid-connection="isValidConnection" @connect="onConnect"
-      @edge-click="onEdgeClick" @node-click="onNodeClick" @pane-click="() => onPaneClick"
+      @edge-click="onEdgeClick" @node-click="onNodeClick" @pane-click="onPaneClick"
       @node-context-menu="onNodeContextMenu" @edge-context-menu="onEdgeContextMenu" @edge-update="onEdgeUpdate"
       @node-drag-start="onNodeDragStart" @node-drag-stop="onNodeDragStop">
       <template #node-trigger="baseNodeProps">

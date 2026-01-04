@@ -5,8 +5,10 @@ import { nodeSchemas } from '@/config/nodeSchemas'
 
 const graph = useGraphStore()
 
-const selectedNode = computed(() =>
-    graph.nodes.find(n => n.id === graph.selectedNodeId)
+const selectedNode = computed(() => {
+    console.log('graph.selectedNodeId', graph.selectedNodeId)
+    return graph.nodes.find(n => n.id === graph.selectedNodeId)
+}
 )
 
 function updateConfig(key: string, value: any) {
