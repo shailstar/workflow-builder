@@ -43,6 +43,14 @@ export interface ExecutionPlan {
     orderedNodeIds: string[]
 }
 
+export interface ExecutionLog {
+    id: string
+    nodeId: string
+    state: NodeRunState
+    message?: string
+    timestamp: number
+}
+
 
 /* ---------- Run Store Shape ---------- */
 

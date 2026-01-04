@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { ExecutionStatus, ExecutionPlan, NodeExecution } from '@/types/run'
+import type { ExecutionStatus, ExecutionPlan, NodeExecution, ExecutionLog } from '@/types/run'
 import { useGraphStore } from '@/stores/graph.store'
 import { validateWorkflow } from '@/domain/validators/workflow.validator'
 import type { ValidationError } from '@/types/validation'
@@ -13,6 +13,7 @@ export const useRunStore = defineStore('run', {
         plan: null as ExecutionPlan | null,
         currentIndex: 0,
         skippedNodeIds: new Set<string>(),
+        logs: [] as ExecutionLog[],
     }),
 
     getters: {
