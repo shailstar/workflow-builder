@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { ExecutionStatus, ExecutionPlan, NodeExecution, ExecutionLog } from '@/types/run'
+import type { ExecutionStatus, ExecutionPlan, NodeExecution, ExecutionLog, NodeRunState } from '@/types/run'
 import { useGraphStore } from '@/stores/graph.store'
 import { validateWorkflow } from '@/domain/validators/workflow.validator'
 import type { ValidationError } from '@/types/validation'
@@ -14,6 +14,7 @@ export const useRunStore = defineStore('run', {
         currentIndex: 0,
         skippedNodeIds: new Set<string>(),
         logs: [] as ExecutionLog[],
+        playIntervalId: null as number | null,
     }),
 
     getters: {
@@ -21,8 +22,14 @@ export const useRunStore = defineStore('run', {
             state.executions.map(e => e.nodeId),
 
         activeNodeId: (state) => {
-            if (state.executions.length) {
-                return state.executions[state.executions.length - 1]?.nodeId || null
+            for (let i = state.executions.length - 1; i >= 0; i--) {
+                const execution = state.executions[i]
+
+                if (!execution) continue
+
+                if (execution.state === 'running') {
+                    return execution.nodeId
+                }
             }
             return null
         },
@@ -49,9 +56,9 @@ export const useRunStore = defineStore('run', {
             this.plan = createExecutionPlan(graph.nodes, graph.edges)
             this.currentIndex = 0
 
-            this.status = 'running'
+            this.status = 'paused'
 
-            this.executeNext()
+            this.play()
         },
 
         reset() {
@@ -63,35 +70,31 @@ export const useRunStore = defineStore('run', {
         },
 
         executeNext() {
-            if (!this.plan) return
+            if (!this.plan) return true
 
             const graph = useGraphStore()
-
-            console.log('this.currentIndex', this.currentIndex, this.plan.orderedNodeIds.length)
 
             while (this.currentIndex < this.plan.orderedNodeIds.length) {
                 const nodeId = this.plan.orderedNodeIds[this.currentIndex]
                 this.currentIndex++
 
-                if (nodeId && this.skippedNodeIds.has(nodeId)) {
-                    continue // keep advancing
-                }
+                if (!nodeId) continue
+                if (this.skippedNodeIds.has(nodeId)) continue
 
                 const node = graph.nodes.find(n => n.id === nodeId)
-
                 if (!node) continue
 
-                if (nodeId) {
-                    this.executions.push({
-                        nodeId,
-                        state: 'running',
-                    })
+                // ✅ Create execution AFTER all guards
+                const execution: NodeExecution = {
+                    nodeId,
+                    state: 'running',
                 }
 
-                // Execute node
+                this.executions.push(execution)
+                this.log(nodeId, 'running')
 
+                /* ---------------- Execute node ---------------- */
 
-                // Condition gating
                 if (node.type === 'logic' && node.subType === 'condition') {
                     const result = evaluateCondition(node.data.config as ConditionConfig)
                     const allowedLabel = result ? 'true' : 'false'
@@ -104,11 +107,18 @@ export const useRunStore = defineStore('run', {
                     }
                 }
 
-                return // exactly ONE node executed per click
+                /* ---------------- Finish execution ---------------- */
+
+                execution.state = 'success'
+                this.log(nodeId, 'success', 'Executed successfully')
+
+                return false // exactly ONE node per step
             }
 
             this.status = 'completed'
+            return true
         },
+
 
         setValidationErrors(errors: ValidationError[]) {
             this.validationErrors = errors
@@ -127,6 +137,45 @@ export const useRunStore = defineStore('run', {
             for (const edge of outgoing) {
                 this.markSubtreeSkipped(edge.target)
             }
-        }
+        },
+
+        log(nodeId: string, state: NodeRunState, message?: string) {
+            this.logs.push({
+                id: crypto.randomUUID(),
+                nodeId,
+                state,
+                message,
+                timestamp: Date.now(),
+            })
+        },
+
+        play() {
+            if (!this.plan || this.status === 'running') return
+
+            this.status = 'running'
+
+            this.playIntervalId = window.setInterval(() => {
+                if (this.status !== 'running') return
+
+                const finished = this.executeNext()
+
+                if (finished) {
+                    this.pause()
+                }
+            }, 1500)
+        },
+
+        pause() {
+            if (this.playIntervalId !== null) {
+                clearInterval(this.playIntervalId)
+                this.playIntervalId = null
+            }
+
+            if (this.status === 'running') {
+                this.status = 'paused'
+            }
+        },
+
+
     },
 })

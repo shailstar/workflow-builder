@@ -3,8 +3,10 @@
 export type ExecutionStatus =
     | 'idle'
     | 'running'
+    | 'paused'
     | 'completed'
     | 'failed'
+
 
 
 /* ---------- Per Node Execution State ---------- */

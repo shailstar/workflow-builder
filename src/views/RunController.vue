@@ -9,6 +9,7 @@ import {
     Play,
     StepForward,
     Maximize2,
+    Pause
 } from 'lucide-vue-next'
 
 const { fitView } = useVueFlow()
@@ -37,6 +38,15 @@ function onFitView() {
     fitView({ padding: 0.2 })
 }
 
+function onPlayPauseClick() {
+    if (run.status === 'running') {
+        run.pause()
+    } else {
+        run.start()
+    }
+}
+
+
 </script>
 
 <template>
@@ -51,8 +61,9 @@ function onFitView() {
 
         <div class="divider" />
 
-        <button class="icon-btn primary" title="Run" @click="onRunClick">
-            <Play :size="18" />
+        <button class="icon-btn primary" title="Run" @click="onPlayPauseClick">
+            <Pause :size="18" v-if="run.status === 'running'" />
+            <Play :size="18" v-else />
         </button>
 
         <button class="icon-btn" title="Next Step" @click="onNextStepClick">
