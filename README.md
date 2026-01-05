@@ -5,6 +5,8 @@ Supports node-based workflows with validation, undo/redo, persistence, and execu
 
 ---
 
+![High Level Design](./public/system_design.svg)
+
 ## Architecture Overview
 
 The app is split into **four core layers**:
