@@ -1,6 +1,6 @@
 # Workflow Builder (Frontend-only)
 
-A frontend-only workflow / automation builder built with **Vue 3 + TypeScript**, **Vue Flow**, **Pinia**, and **TailwindCSS**.  
+A frontend-only workflow / automation builder built with **Vue 3 + TypeScript**, **Vue Flow**, and **Pinia**.
 Supports node-based workflows with validation, undo/redo, persistence, and execution preview.
 
 ---
