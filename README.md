@@ -187,3 +187,46 @@ state: 'running' | 'success' | 'error'
 }
 
 ```
+
+## How to Add a New Node Type
+
+Adding a new node requires in already specified node categories **no changes to core logic**.
+
+### 1. Register in the node registry and graph types
+
+```ts
+export type TriggerSubTypes = 'manual' | 'webhook'
+export type ActionSubTypes = 'http' | 'email' | 'sms'
+export type LogicSubTypes = 'condition' | 'transform' | 'newSubType'
+
+export const NODE_REGISTRY = {
+  trigger: {
+    manual: { label: 'Manual Trigger' },
+    webhook: { label: 'Webhook Trigger' },
+  },
+  action: {
+    http: { label: 'HTTP Request' },
+    email: { label: 'Send Email' },
+    sms: { label: 'Send SMS' },
+  },
+  logic: {
+    condition: { label: 'Condition' },
+    transform: { label: 'Transform' },
+    newSubType: { label: 'NewSubTypeLabel' },
+  },
+} as const
+```
+
+### 2. Register the node schema
+
+Define config fields in `nodeSchemas`.
+
+```ts
+nodeSchemas.newSubType = [{ key: 'foo', label: 'Foo', type: 'text', required: true }]
+```
+
+### 3. (Optional) Handle execution logic in executeNodeTask
+
+```ts
+executeNodeTask(node: any): Promise<NodeTaskResult> {...}
+```
