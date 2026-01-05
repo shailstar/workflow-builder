@@ -190,7 +190,7 @@ state: 'running' | 'success' | 'error'
 
 ## How to Add a New Node Type
 
-Adding a new node requires in already specified node categories **no changes to core logic**.
+Adding a new node in already specified node categories requires **no changes to core logic**.
 
 ### 1. Register in the node registry and graph types
 
