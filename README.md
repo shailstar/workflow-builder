@@ -147,7 +147,7 @@ Source of truth for the workflow graph.
 type GraphNode = {
     id: string
     type: NodeType
-    subType: TriggerSubTypes
+    subType: NodeSubTypes
     position: { x: number; y: number }
     data: NodeData
 }
