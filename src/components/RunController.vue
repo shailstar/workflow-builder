@@ -8,6 +8,8 @@ import { clearWorkflow } from '@/utils/persistence'
 import { ref } from "vue"
 import { loadWorkflow, saveWorkflow } from '@/utils/persistence'
 
+import { toast } from 'vue-sonner'
+
 import {
     Undo2,
     Redo2,
@@ -81,6 +83,7 @@ function onSaveClick() {
         nodes: graph.nodes,
         edges: graph.edges,
     })
+    toast.success('Workflow Saved')
 }
 
 /* ---------- Explicit Load ---------- */
@@ -90,6 +93,7 @@ function onLoadClick() {
 
     graph.resetGraph()
     graph.applyStorageChanges(snapshot)
+    toast.success('Workflow Loaded')
 }
 
 

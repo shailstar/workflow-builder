@@ -9,6 +9,8 @@ import { onMounted, onUnmounted } from 'vue'
 import { useGraphStore } from '@/stores/graph.store'
 import { loadWorkflow } from '@/utils/persistence'
 import ValidationErrorsPanel from './components/ValidationErrorsPanel.vue';
+import { Toaster } from 'vue-sonner'
+import 'vue-sonner/style.css'
 
 const graph = useGraphStore()
 
@@ -61,4 +63,5 @@ onUnmounted(() => {
   <EdgeConfigPanel />
   <NodeConfigPanel />
   <ValidationErrorsPanel />
+  <Toaster position="bottom-right" theme="light" :duration="2000" richColors />
 </template>
