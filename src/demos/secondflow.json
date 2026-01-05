@@ -1,0 +1,104 @@
+{
+  "nodes": [
+    {
+      "id": "trigger-cart",
+      "type": "trigger",
+      "subType": "webhook",
+      "position": { "x": 0, "y": 200 },
+      "data": {
+        "label": "Cart Abandoned",
+        "config": {
+          "url": "https://example.com/cart"
+        }
+      }
+    },
+    {
+      "id": "cond-stock",
+      "type": "logic",
+      "subType": "condition",
+      "position": { "x": 260, "y": 200 },
+      "data": {
+        "label": "Item In Stock?",
+        "config": {
+          "left": "item.stock",
+          "operator": ">",
+          "right": "0"
+        }
+      }
+    },
+    {
+      "id": "email-reminder",
+      "type": "action",
+      "subType": "email",
+      "position": { "x": 520, "y": 100 },
+      "data": {
+        "label": "Cart Reminder Email",
+        "config": {
+          "to": "{{user.email}}",
+          "subject": "You left items in your cart"
+        }
+      }
+    },
+    {
+      "id": "delay-2h",
+      "type": "action",
+      "subType": "delay",
+      "position": { "x": 780, "y": 100 },
+      "data": {
+        "label": "Wait 2 Hours",
+        "config": {
+          "duration": "2h"
+        }
+      }
+    },
+    {
+      "id": "cond-purchased",
+      "type": "logic",
+      "subType": "condition",
+      "position": { "x": 1040, "y": 100 },
+      "data": {
+        "label": "Purchased?",
+        "config": {
+          "left": "order.completed",
+          "operator": "==",
+          "right": "false"
+        }
+      }
+    },
+    {
+      "id": "sms-nudge",
+      "type": "action",
+      "subType": "sms",
+      "position": { "x": 1300, "y": 20 },
+      "data": {
+        "label": "SMS Nudge",
+        "config": {
+          "phoneNumber": "{{user.phone}}",
+          "message": "Still thinking? Complete your purchase now!"
+        }
+      }
+    },
+    {
+      "id": "http-hold",
+      "type": "action",
+      "subType": "http",
+      "position": { "x": 1560, "y": 20 },
+      "data": {
+        "label": "Hold Inventory",
+        "config": {
+          "url": "https://api.store.com/hold",
+          "method": "POST",
+          "simulateFail": "false"
+        }
+      }
+    }
+  ],
+  "edges": [
+    { "id": "e1", "source": "trigger-cart", "target": "cond-stock" },
+    { "id": "e2", "source": "cond-stock", "target": "email-reminder", "label": "true" },
+    { "id": "e3", "source": "email-reminder", "target": "delay-2h" },
+    { "id": "e4", "source": "delay-2h", "target": "cond-purchased" },
+    { "id": "e5", "source": "cond-purchased", "target": "sms-nudge", "label": "true" },
+    { "id": "e6", "source": "sms-nudge", "target": "http-hold" }
+  ]
+}

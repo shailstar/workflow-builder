@@ -9,6 +9,7 @@ import { onMounted, onUnmounted } from 'vue'
 import { useGraphStore } from '@/stores/graph.store'
 import { loadWorkflow } from '@/utils/persistence'
 import ValidationErrorsPanel from './components/ValidationErrorsPanel.vue';
+import firstFlow from '@/demos/firstflow.json'
 
 const graph = useGraphStore()
 
@@ -51,6 +52,8 @@ onMounted(() => {
   const snapshot = loadWorkflow()
   if (snapshot) {
     graph.applyStorageChanges(snapshot)
+  } else {
+    graph.applyStorageChanges(firstFlow)
   }
 })
 

@@ -1,0 +1,103 @@
+{
+  "nodes": [
+    {
+      "id": "trigger-webhook",
+      "type": "trigger",
+      "subType": "webhook",
+      "position": { "x": 0, "y": 100 },
+      "data": {
+        "label": "New Lead Webhook",
+        "config": {
+          "url": "https://example.com/webhook"
+        }
+      }
+    },
+    {
+      "id": "email-welcome",
+      "type": "action",
+      "subType": "email",
+      "position": { "x": 260, "y": 100 },
+      "data": {
+        "label": "Send Welcome Email",
+        "config": {
+          "to": "{{lead.email}}",
+          "subject": "Welcome to our product!"
+        }
+      }
+    },
+    {
+      "id": "delay-1h",
+      "type": "action",
+      "subType": "delay",
+      "position": { "x": 520, "y": 100 },
+      "data": {
+        "label": "Wait 1 Hour",
+        "config": {
+          "duration": "1h"
+        }
+      }
+    },
+    {
+      "id": "http-crm",
+      "type": "action",
+      "subType": "http",
+      "position": { "x": 780, "y": 100 },
+      "data": {
+        "label": "Add Lead to CRM",
+        "config": {
+          "url": "https://api.crm.com/leads",
+          "method": "POST",
+          "simulateFail": "false"
+        }
+      }
+    },
+    {
+      "id": "condition-status",
+      "type": "logic",
+      "subType": "condition",
+      "position": { "x": 1040, "y": 100 },
+      "data": {
+        "label": "CRM Response OK?",
+        "config": {
+          "left": "response.status",
+          "operator": "==",
+          "right": "200"
+        }
+      }
+    },
+    {
+      "id": "sms-success",
+      "type": "action",
+      "subType": "sms",
+      "position": { "x": 1300, "y": 20 },
+      "data": {
+        "label": "Send Success SMS",
+        "config": {
+          "phoneNumber": "{{lead.phone}}",
+          "message": "Lead added successfully!"
+        }
+      }
+    },
+    {
+      "id": "sms-error",
+      "type": "action",
+      "subType": "sms",
+      "position": { "x": 1300, "y": 180 },
+      "data": {
+        "label": "Alert Support",
+        "config": {
+          "phoneNumber": "+911234567890",
+          "message": "CRM lead creation failed"
+        }
+      }
+    }
+  ],
+  "edges": [
+    { "id": "e1", "source": "trigger-webhook", "target": "email-welcome" },
+    { "id": "e2", "source": "email-welcome", "target": "delay-1h" },
+    { "id": "e3", "source": "delay-1h", "target": "http-crm" },
+    { "id": "e4", "source": "http-crm", "target": "condition-status" },
+    { "id": "e5", "source": "condition-status", "target": "sms-success", "label": "true" },
+    { "id": "e6", "source": "condition-status", "target": "sms-error", "label": "false" }
+  ]
+}
