@@ -12,6 +12,7 @@ import ValidationErrorsPanel from './components/ValidationErrorsPanel.vue';
 import { Toaster } from 'vue-sonner'
 import 'vue-sonner/style.css'
 
+
 const graph = useGraphStore()
 
 function onKeydown(e: KeyboardEvent) {

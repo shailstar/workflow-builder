@@ -101,47 +101,83 @@ function onLoadClick() {
 
 <template>
     <div class="run-controller">
-        <!-- History -->
-        <button class="icon-btn" title="Undo" @click="historyUndo">
-            <Undo2 :size="18" />
-        </button>
 
-        <button class="icon-btn" title="Redo" @click="historyRedo">
-            <Redo2 :size="18" />
-        </button>
+        <VTooltip>
+            <!-- History -->
+            <button class="icon-btn" title="Undo" @click="historyUndo">
+                <Undo2 :size="18" />
+            </button>
+            <template #popper>
+                Undo
+            </template>
+        </VTooltip>
+        <VTooltip>
+
+            <button class="icon-btn" title="Redo" @click="historyRedo">
+                <Redo2 :size="18" />
+            </button>
+            <template #popper>
+                Redo
+            </template>
+        </VTooltip>
 
         <div class="divider" />
-
-        <!-- Run controls -->
-        <button class="icon-btn primary" title="Run / Pause" @click="onPlayPauseClick">
-            <Pause v-if="run.status === 'running'" :size="18" />
-            <Play v-else :size="18" />
-        </button>
-
-        <button class="icon-btn" title="Next Step" :disabled="run.status !== 'paused'" @click="onNextStepClick">
-            <StepForward :size="18" />
-        </button>
+        <VTooltip>
+            <!-- Run controls -->
+            <button class="icon-btn primary" title="Run / Pause" @click="onPlayPauseClick">
+                <Pause v-if="run.status === 'running'" :size="18" />
+                <Play v-else :size="18" />
+            </button>
+            <template #popper>
+                Run / Pause
+            </template>
+        </VTooltip>
+        <VTooltip>
+            <button class="icon-btn" title="Next Step" :disabled="run.status !== 'paused'" @click="onNextStepClick">
+                <StepForward :size="18" />
+            </button>
+            <template #popper>
+                Next Step
+            </template>
+        </VTooltip>
 
         <div class="divider" />
 
         <!-- View -->
-        <button class="icon-btn" title="Fit View" @click="onFitView">
-            <View :size="18" />
-        </button>
+        <VTooltip>
+            <button class="icon-btn" title="Fit View" @click="onFitView">
+                <View :size="18" />
+            </button>
+            <template #popper>
+                Fit View
+            </template>
+        </VTooltip>
 
         <div class="divider" />
-
-        <button class="icon-btn" title="Fit View" @click="onSaveClick">
-            <HardDriveUpload :size="18" />
-        </button>
-
-        <button class="icon-btn" title="Fit View" @click="onLoadClick">
-            <HardDriveDownload :size="18" />
-        </button>
-
-        <button class="icon-btn" title="New workflow" @click="onClearWorkflow">
-            <Trash :size="18" />
-        </button>
+        <VTooltip>
+            <button class="icon-btn" title="Fit View" @click="onSaveClick">
+                <HardDriveUpload :size="18" />
+            </button>
+            <template #popper>
+                Save Workflow
+            </template>
+        </VTooltip>
+        <VTooltip>
+            <button class="icon-btn" title="Fit View" @click="onLoadClick">
+                <HardDriveDownload :size="18" />
+            </button>
+            <template #popper>
+                Load Workflow
+            </template>
+        </VTooltip>
+        <VTooltip>
+            <button class="icon-btn" title="New workflow" @click="onClearWorkflow">
+                <Trash :size="18" />
+            </button>
+            <template #popper>
+                Clear Slate
+            </template>
+        </VTooltip>
 
         <div class="divider" />
 
