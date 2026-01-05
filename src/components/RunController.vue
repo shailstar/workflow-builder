@@ -6,6 +6,7 @@ import { useVueFlow } from '@vue-flow/core'
 import { DEMO_WORKFLOWS } from '@/demos/demo-registry'
 import { clearWorkflow } from '@/utils/persistence'
 import { ref } from "vue"
+import { loadWorkflow, saveWorkflow } from '@/utils/persistence'
 
 import {
     Undo2,
@@ -13,7 +14,10 @@ import {
     Play,
     StepForward,
     View,
-    Pause
+    Pause,
+    HardDriveUpload,
+    HardDriveDownload,
+    Trash
 } from 'lucide-vue-next'
 
 const { fitView } = useVueFlow()
@@ -72,6 +76,22 @@ function onClearWorkflow() {
     clearWorkflow()
 }
 
+function onSaveClick() {
+    saveWorkflow({
+        nodes: graph.nodes,
+        edges: graph.edges,
+    })
+}
+
+/* ---------- Explicit Load ---------- */
+function onLoadClick() {
+    const snapshot = loadWorkflow()
+    if (!snapshot) return
+
+    graph.resetGraph()
+    graph.applyStorageChanges(snapshot)
+}
+
 
 </script>
 
@@ -107,10 +127,19 @@ function onClearWorkflow() {
 
         <div class="divider" />
 
-        <!-- View -->
-        <button class="icon-btn" title="New workflow" @click="onClearWorkflow">
-            Clear
+        <button class="icon-btn" title="Fit View" @click="onSaveClick">
+            <HardDriveUpload :size="18" />
         </button>
+
+        <button class="icon-btn" title="Fit View" @click="onLoadClick">
+            <HardDriveDownload :size="18" />
+        </button>
+
+        <button class="icon-btn" title="New workflow" @click="onClearWorkflow">
+            <Trash :size="18" />
+        </button>
+
+        <div class="divider" />
 
         <!-- Demo selector -->
         <div class="demo-wrapper">
