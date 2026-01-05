@@ -31,7 +31,6 @@ export const nodeSchemas: Record<string, FieldSchema[]> = {
         },
     ],
 
-
     email: [
         { key: 'to', label: 'To', type: 'text', required: true },
         { key: 'subject', label: 'Subject', type: 'text' },
@@ -40,6 +39,10 @@ export const nodeSchemas: Record<string, FieldSchema[]> = {
     sms: [
         { key: 'phoneNumber', label: 'Phone Number', type: 'text', required: true },
         { key: 'message', label: 'Message', type: 'text' },
+    ],
+
+    delay: [
+        { key: 'duration', label: 'Duration', type: 'text', required: true },
     ],
 
     condition: [

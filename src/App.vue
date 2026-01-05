@@ -10,6 +10,7 @@ import { useGraphStore } from '@/stores/graph.store'
 import { loadWorkflow } from '@/utils/persistence'
 import ValidationErrorsPanel from './components/ValidationErrorsPanel.vue';
 import firstFlow from '@/demos/firstflow.json'
+import secondFlow from '@/demos/secondflow.json'
 
 const graph = useGraphStore()
 
@@ -51,10 +52,12 @@ onMounted(() => {
   window.addEventListener('keydown', onKeydown)
   const snapshot = loadWorkflow()
   if (snapshot) {
+    console.log('Loaded workflow from storage', snapshot)
     graph.applyStorageChanges(snapshot)
   } else {
-    graph.applyStorageChanges(firstFlow)
+    graph.applyStorageChanges(JSON.parse(JSON.stringify(firstFlow)))
   }
+  //graph.applyStorageChanges(JSON.parse(JSON.stringify(secondFlow)))
 })
 
 onUnmounted(() => {

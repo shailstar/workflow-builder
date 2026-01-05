@@ -4,7 +4,7 @@ export type NodeType =
   | 'logic'
 
 export type TriggerSubTypes = 'manual' | 'webhook'
-export type ActionSubTypes = 'http' | 'email' | 'sms'
+export type ActionSubTypes = 'http' | 'email' | 'sms' | 'delay'
 export type LogicSubTypes = 'condition' | 'transform'
 
 interface NodeData {
@@ -51,6 +51,7 @@ export const NODE_REGISTRY = {
     http: { label: 'HTTP Request' },
     email: { label: 'Send Email' },
     sms: { label: 'Send SMS' },
+    delay: { label: 'Delay' },
   },
   logic: {
     condition: { label: 'Condition' },
