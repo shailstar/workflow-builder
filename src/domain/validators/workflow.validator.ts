@@ -1,6 +1,5 @@
 import type { GraphNode, GraphEdge } from '@/types/graph'
 import type { ValidationResult } from '@/types/validation'
-import { NODE_VALIDATORS } from './node.validator'
 import { validateNodeConfig } from '@/domain/validators/node.validator'
 
 

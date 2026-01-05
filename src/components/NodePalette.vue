@@ -18,20 +18,31 @@ function onDragStart(
 
 
 <template>
-  <div class="palette-root">
+  <aside class="palette-root" role="complementary" aria-label="Node palette">
+    <!-- Header -->
+    <div class="palette-header">
+      <h3 class="palette-heading">Node Palette</h3>
+      <p class="palette-subtext">Drag nodes onto canvas</p>
+    </div>
+
+    <div class="palette-divider" />
+
+    <!-- Groups -->
     <div v-for="(group, type) in NODE_REGISTRY" :key="type" class="palette-group">
       <h4 class="palette-title">{{ type }}</h4>
 
       <div class="palette-items">
-        <div v-for="(def, subType) in group" :key="subType" class="palette-item" draggable="true"
-          :data-testid="`palette-node-${type}-${subType}`" @dragstart="onDragStart($event, type, subType, def.label)">
+        <div v-for="(def, subType) in group" :key="subType" class="palette-item" draggable="true" tabindex="0"
+          role="button" :aria-label="`Add ${def.label} node`" :data-testid="`palette-node-${type}-${subType}`"
+          @dragstart="onDragStart($event, type, subType, def.label)">
           <span class="palette-dot" />
           {{ def.label }}
         </div>
       </div>
     </div>
-  </div>
+  </aside>
 </template>
+
 
 <style scoped>
 .palette-root {
@@ -119,5 +130,31 @@ function onDragStart(
   border-radius: 999px;
   background: linear-gradient(135deg, #38bdf8, #6366f1);
   box-shadow: 0 0 8px rgba(99, 102, 241, 0.8);
+}
+
+.palette-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.palette-heading {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e5e7eb;
+  letter-spacing: 0.01em;
+}
+
+.palette-subtext {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.palette-divider {
+  height: 1px;
+  background: linear-gradient(to right,
+      transparent,
+      #1e293b,
+      transparent);
 }
 </style>
