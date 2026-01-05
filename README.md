@@ -24,7 +24,6 @@ Responsible only for **rendering** and **emitting user intent**.
 
 **Characteristics:**
 
-- Reads state as a **snapshot** (no direct mutations)
 - Emits intent like:
   - add node
   - move node
@@ -111,7 +110,6 @@ A **pure, side-effect-free** module.
 - On load:
   - snapshot is read
   - validated & parsed
-  - rehydrated into state
 
 ---
 
