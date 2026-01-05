@@ -144,4 +144,28 @@ Source of truth for the workflow graph.
   selectedEdgeId: string | null
 }
 
+{
+  past: Snapshot[]
+  present: Snapshot | null
+  future: Snapshot[]
+}
+
+type Snapshot = {
+  nodes: GraphNode[]
+  edges: GraphEdge[]
+}
+
+{
+  status: 'idle' | 'running' | 'paused' | 'completed'
+  executions: NodeExecution[]
+  activeNodeId: string | null
+  skippedNodeIds: Set<string>
+  validationErrors: ValidationError[]
+}
+
+type NodeExecution = {
+  nodeId: string
+  state: 'running' | 'success' | 'error'
+}
+
 ```
