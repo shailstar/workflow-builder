@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import type { GraphNode, GraphEdge } from '@/types/graph'
 import { produce } from 'immer'
 import { useHistoryStore } from '@/stores/history.store'
-import { saveWorkflow, loadWorkflow } from '@/utils/persistence'
+import { saveWorkflow, loadWorkflow, autosaveWorkflow } from '@/utils/persistence'
 import { createSnapshot } from '@/utils/snapshot'
 
 export const useGraphStore = defineStore('graph', {
@@ -204,7 +204,7 @@ export const useGraphStore = defineStore('graph', {
         },
 
         persist() {
-            saveWorkflow({
+            autosaveWorkflow({
                 nodes: this.nodes,
                 edges: this.edges,
             })

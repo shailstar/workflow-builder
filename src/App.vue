@@ -49,11 +49,10 @@ function onKeydown(e: KeyboardEvent) {
 onMounted(() => {
   window.addEventListener('keydown', onKeydown)
   const snapshot = loadWorkflow()
-  // if (snapshot) {
-  //   console.log('Loaded workflow from storage', snapshot)
-  //   graph.applyStorageChanges(snapshot)
-  // }
-  //graph.applyStorageChanges(JSON.parse(JSON.stringify(secondFlow)))
+  if (snapshot) {
+    console.log('Loaded workflow from storage', snapshot)
+    graph.applyStorageChanges(snapshot)
+  }
 })
 
 onUnmounted(() => {

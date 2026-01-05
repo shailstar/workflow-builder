@@ -4,7 +4,8 @@ import { useHistoryStore } from '@/stores/history.store'
 import { useRunStore } from '@/stores/run.store'
 import { useVueFlow } from '@vue-flow/core'
 import { DEMO_WORKFLOWS } from '@/demos/demo-registry'
-import { ref } from "vue";
+import { clearWorkflow } from '@/utils/persistence'
+import { ref } from "vue"
 
 import {
     Undo2,
@@ -68,6 +69,7 @@ function onClearWorkflow() {
     graph.resetGraph()
     run.reset()
     history.clear()
+    clearWorkflow()
 }
 
 

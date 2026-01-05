@@ -4,7 +4,10 @@
       "id": "trigger-cart",
       "type": "trigger",
       "subType": "webhook",
-      "position": { "x": 0, "y": 200 },
+      "position": {
+        "x": 0,
+        "y": 200
+      },
       "data": {
         "label": "Cart Abandoned",
         "config": {
@@ -16,7 +19,10 @@
       "id": "cond-stock",
       "type": "logic",
       "subType": "condition",
-      "position": { "x": 260, "y": 200 },
+      "position": {
+        "x": 260,
+        "y": 200
+      },
       "data": {
         "label": "Item In Stock?",
         "config": {
@@ -30,7 +36,10 @@
       "id": "email-reminder",
       "type": "action",
       "subType": "email",
-      "position": { "x": 520, "y": 100 },
+      "position": {
+        "x": 520,
+        "y": 100
+      },
       "data": {
         "label": "Cart Reminder Email",
         "config": {
@@ -43,7 +52,10 @@
       "id": "delay-2h",
       "type": "action",
       "subType": "delay",
-      "position": { "x": 780, "y": 100 },
+      "position": {
+        "x": 780,
+        "y": 100
+      },
       "data": {
         "label": "Wait 2 Hours",
         "config": {
@@ -55,7 +67,10 @@
       "id": "cond-purchased",
       "type": "logic",
       "subType": "condition",
-      "position": { "x": 1040, "y": 100 },
+      "position": {
+        "x": 1040,
+        "y": 100
+      },
       "data": {
         "label": "Purchased?",
         "config": {
@@ -69,7 +84,10 @@
       "id": "sms-nudge",
       "type": "action",
       "subType": "sms",
-      "position": { "x": 1300, "y": 20 },
+      "position": {
+        "x": 1300,
+        "y": 20
+      },
       "data": {
         "label": "SMS Nudge",
         "config": {
@@ -82,7 +100,10 @@
       "id": "http-hold",
       "type": "action",
       "subType": "http",
-      "position": { "x": 1560, "y": 20 },
+      "position": {
+        "x": 1560,
+        "y": 20
+      },
       "data": {
         "label": "Hold Inventory",
         "config": {
@@ -91,14 +112,84 @@
           "simulateFail": "false"
         }
       }
+    },
+    {
+      "id": "3c0edd91-ff17-4a04-a05c-c35c1a0f9c80",
+      "type": "action",
+      "subType": "email",
+      "position": {
+        "x": 720,
+        "y": 480
+      },
+      "data": {
+        "label": "Send Email",
+        "config": {
+          "to": "{{lead.email}}",
+          "subject": "Welcome to our product!"
+        }
+      }
+    },
+    {
+      "id": "2420b539-a265-4d37-8471-e6488484b9fe",
+      "type": "action",
+      "subType": "email",
+      "position": {
+        "x": 1399.5363443250817,
+        "y": 308.4885514190731
+      },
+      "data": {
+        "label": "Send Email",
+        "config": {
+          "to": "{{lead.email}}",
+          "subject": "Welcome to our product!"
+        }
+      }
     }
   ],
   "edges": [
-    { "id": "e1", "source": "trigger-cart", "target": "cond-stock" },
-    { "id": "e2", "source": "cond-stock", "target": "email-reminder", "label": "true" },
-    { "id": "e3", "source": "email-reminder", "target": "delay-2h" },
-    { "id": "e4", "source": "delay-2h", "target": "cond-purchased" },
-    { "id": "e5", "source": "cond-purchased", "target": "sms-nudge", "label": "true" },
-    { "id": "e6", "source": "sms-nudge", "target": "http-hold" }
+    {
+      "id": "e1",
+      "source": "trigger-cart",
+      "target": "cond-stock"
+    },
+    {
+      "id": "e2",
+      "source": "cond-stock",
+      "target": "email-reminder",
+      "label": "true"
+    },
+    {
+      "id": "e3",
+      "source": "email-reminder",
+      "target": "delay-2h"
+    },
+    {
+      "id": "e4",
+      "source": "delay-2h",
+      "target": "cond-purchased"
+    },
+    {
+      "id": "e5",
+      "source": "cond-purchased",
+      "target": "sms-nudge",
+      "label": "true"
+    },
+    {
+      "id": "e6",
+      "source": "sms-nudge",
+      "target": "http-hold"
+    },
+    {
+      "id": "44a56699-8fb8-49fd-872b-073ada308021",
+      "source": "cond-stock",
+      "target": "3c0edd91-ff17-4a04-a05c-c35c1a0f9c80",
+      "label": "false"
+    },
+    {
+      "id": "98ce61f5-c27a-4b9e-8497-676f4c491055",
+      "source": "cond-purchased",
+      "target": "2420b539-a265-4d37-8471-e6488484b9fe",
+      "label": "false"
+    }
   ]
 }
