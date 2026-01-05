@@ -144,6 +144,14 @@ Source of truth for the workflow graph.
   selectedEdgeId: string | null
 }
 
+type GraphNode = {
+    id: string
+    type: NodeType
+    subType: TriggerSubTypes
+    position: { x: number; y: number }
+    data: NodeData
+}
+
 ```
 
 ### History Store (Core Workflow State)
