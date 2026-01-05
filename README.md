@@ -132,9 +132,9 @@ All stores are **snapshot-based** to support undo/redo, persistence, and determi
 
 ## State Shape
 
-### Graph Store (Core Workflow State)
-
 Source of truth for the workflow graph.
+
+### Graph Store (Core Workflow State)
 
 ```ts
 {
@@ -144,6 +144,11 @@ Source of truth for the workflow graph.
   selectedEdgeId: string | null
 }
 
+```
+
+### History Store (Core Workflow State)
+
+```ts
 {
   past: Snapshot[]
   present: Snapshot | null
@@ -154,18 +159,23 @@ type Snapshot = {
   nodes: GraphNode[]
   edges: GraphEdge[]
 }
+```
+
+### Run Store (Core Workflow State)
+
+```ts
 
 {
-  status: 'idle' | 'running' | 'paused' | 'completed'
-  executions: NodeExecution[]
-  activeNodeId: string | null
-  skippedNodeIds: Set<string>
-  validationErrors: ValidationError[]
+status: 'idle' | 'running' | 'paused' | 'completed'
+executions: NodeExecution[]
+activeNodeId: string | null
+skippedNodeIds: Set<string>
+validationErrors: ValidationError[]
 }
 
 type NodeExecution = {
-  nodeId: string
-  state: 'running' | 'success' | 'error'
+nodeId: string
+state: 'running' | 'success' | 'error'
 }
 
 ```
