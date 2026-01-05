@@ -65,9 +65,15 @@ export const useRunStore = defineStore('run', {
         reset() {
             this.status = 'idle'
             this.executions = []
-            this.currentIndex = 0
+            this.validationErrors = []
             this.plan = null
+            this.currentIndex = 0
             this.skippedNodeIds.clear()
+            this.logs = []
+            if (this.playIntervalId !== null) {
+                clearInterval(this.playIntervalId)
+                this.playIntervalId = null
+            }
         },
 
         async executeNext() {
@@ -208,7 +214,7 @@ export const useRunStore = defineStore('run', {
             return new Promise((resolve) => {
                 setTimeout(() => {
                     // ❌ Simulated failure
-                    if (node.type === 'action' && node.data.config?.simulateFail) {
+                    if (node.type === 'action' && node.data.config?.simulateFail === 'true') {
                         resolve({
                             success: false,
                             message: 'Action execution failed',
@@ -231,7 +237,5 @@ export const useRunStore = defineStore('run', {
                 }, 800) // simulate async delay
             })
         }
-
-
     },
 })

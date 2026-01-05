@@ -35,5 +35,11 @@ export const useHistoryStore = defineStore('history', {
             this.past.push(this.present!)
             this.present = next
         },
+
+        clear() {
+            this.past = []
+            this.present = null
+            this.future = []
+        }
     }
 })

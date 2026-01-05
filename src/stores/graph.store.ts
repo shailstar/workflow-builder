@@ -231,6 +231,13 @@ export const useGraphStore = defineStore('graph', {
             snapshot.edges.forEach(edge => {
                 this.addEdge(structuredClone(edge))
             })
+        },
+
+        resetGraph() {
+            this.nodes = []
+            this.edges = []
+            this.selectedEdgeId = null
+            this.selectedNodeId = null
         }
     },
 })
