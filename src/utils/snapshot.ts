@@ -5,7 +5,6 @@ export type Snapshot = {
     edges: GraphEdge[]
 }
 
-
 export function createSnapshot(
     nodes: GraphNode[],
     edges: GraphEdge[]

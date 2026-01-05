@@ -18,6 +18,9 @@ const graph = useGraphStore()
 
 const GRID_SIZE = 16
 
+const isDraggingNode = ref(false)
+const contextNodeId = ref<string | null>(null)
+
 function onDragOver(event: DragEvent) {
   event.preventDefault()
   event.dataTransfer!.dropEffect = 'move'
@@ -56,11 +59,6 @@ function onDrop(event: DragEvent) {
     },
   })
 }
-
-
-
-const isDraggingNode = ref(false)
-const contextNodeId = ref<string | null>(null)
 
 function onNodeDragStart() {
   isDraggingNode.value = true
