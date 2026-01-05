@@ -1,42 +1,124 @@
-# workflow-builder
+# Workflow Builder (Frontend-only)
 
-This template should help get you started developing with Vue 3 in Vite.
+A frontend-only workflow / automation builder built with **Vue 3 + TypeScript**, **Vue Flow**, **Pinia**, and **TailwindCSS**.  
+Supports node-based workflows with validation, undo/redo, persistence, and execution preview.
 
-## Recommended IDE Setup
+---
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Architecture Overview
 
-## Recommended Browser Setup
+The app is split into **four core layers**:
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+---
 
-## Type Support for `.vue` Imports in TS
+### 1. View Layer (Pure UI)
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+Responsible only for **rendering** and **emitting user intent**.
 
-## Customize configuration
+**Key parts:**
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+- Canvas (Vue Flow)
+- Node Palette
+- Node Config Panel
+- Run Controls
 
-## Project Setup
+**Characteristics:**
 
-```sh
-npm install
-```
+- Reads state as a **snapshot** (no direct mutations)
+- Emits intent like:
+  - add node
+  - move node
+  - connect nodes
+  - start / stop run
+- No business logic
 
-### Compile and Hot-Reload for Development
+---
 
-```sh
-npm run dev
-```
+### 2. Control Layer (Application Logic)
 
-### Type-Check, Compile and Minify for Production
+Acts as the **brain** of the system.
 
-```sh
-npm run build
-```
+**Responsibilities:**
+
+- Graph mutations
+  - `addNode`
+  - `deleteNode`
+  - `updateNodePosition`
+  - `addEdge`
+  - `deleteEdge`
+- Undo / Redo orchestration
+- Run orchestration
+  - `startRun`
+  - `pauseRun`
+  - `stepRun`
+  - `stopRun`
+
+**Key idea:**
+
+- Converts **user intent → state changes**
+- Reads state to make decisions
+- Writes state to the Data Layer
+
+---
+
+### 3. Data Layer (State Ownership)
+
+Owns all **authoritative state**.
+
+**Includes:**
+
+- Graph State
+  - nodes
+  - edges
+  - viewport (x, y, zoom)
+- History State (time-travel)
+  - `past`
+  - `present`
+  - `future`
+- View-coordination state
+  - `selectedNodeId`
+  - `isConfigPanelOpen`
+  - `activeTool`
+
+**Derived State:**
+
+- Computed from graph snapshot
+- Used for rendering and execution decisions
+
+---
+
+### 4. Runner (Pure Execution Logic)
+
+A **pure, side-effect-free** module.
+
+- input → graph snapshot + current node
+- output → next node + execution result
+
+- Does not mutate state
+- Easy to test
+- Used by Run Orchestrator in Control Layer
+
+---
+
+### 5. Persistence (Side Effect)
+
+- Graph snapshots are written to:
+  - `localStorage` (current)
+  - IndexedDB / backend (future)
+- Persistence is:
+  - **debounced**
+  - triggered by snapshot changes
+- On load:
+  - snapshot is read
+  - validated & parsed
+  - rehydrated into state
+
+---
+
+### Data Flow Summary
+
+- View **reads snapshot** → renders UI
+- View **emits intent**
+- Control Layer **processes intent**
+- Data Layer **updates state**
+- Snapshot is **persisted asynchronously**
