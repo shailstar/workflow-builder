@@ -3,6 +3,7 @@ import type { GraphNode, GraphEdge } from '@/types/graph'
 import { produce } from 'immer'
 import { useHistoryStore } from '@/stores/history.store'
 import { saveWorkflow, loadWorkflow } from '@/utils/persistence'
+import { createSnapshot } from '@/utils/snapshot'
 
 export const useGraphStore = defineStore('graph', {
     state: () => ({

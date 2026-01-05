@@ -7,7 +7,7 @@ defineProps<{
 </script>
 
 <template>
-    <div class="node" :id="id" :class="{
+    <div class="node" :id="id" tabindex="0" role="group" :aria-label="data.label" :class="{
         'node--selected': selected,
         'node--active': data.active,
         'node--executed': data.executed,
@@ -100,6 +100,14 @@ defineProps<{
 .node--error .node-dot {
     background: #ef4444;
 }
+
+.node:focus-visible {
+    outline: none;
+    box-shadow:
+        0 0 0 3px rgba(59, 130, 246, 0.8),
+        0 0 40px rgba(59, 130, 246, 0.35);
+}
+
 
 @keyframes pulse-glow {
     0% {

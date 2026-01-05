@@ -72,9 +72,6 @@
   opacity: 1;
 }
 
-
-
-
 @keyframes edge-flow {
   from {
     stroke-dashoffset: 0;
@@ -85,15 +82,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+
   .edge--active path {
     animation: none;
     stroke-dasharray: none;
   }
 }
-
-
-
-
-
-
-

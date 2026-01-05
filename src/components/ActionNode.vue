@@ -13,8 +13,10 @@ defineProps<{
     <BaseNodeShell v-bind="$props">
         <template #title>{{ data.label }}</template>
 
-        <Handle type="target" :position="Position.Left" class="handle handle--target" />
+        <Handle type="target" :position="Position.Left" class="handle handle--target" role="button"
+            aria-label="Incoming connection" />
 
-        <Handle type="source" :position="Position.Right" class="handle handle--source" />
+        <Handle type="source" :position="Position.Right" class="handle handle--source" role="button"
+            aria-label="Outgoing connection" />
     </BaseNodeShell>
 </template>

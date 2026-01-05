@@ -1,5 +1,8 @@
 import type { GraphNode, GraphEdge } from '@/types/graph'
 import type { ValidationResult } from '@/types/validation'
+import { NODE_VALIDATORS } from './node.validator'
+import { validateNodeConfig } from '@/domain/validators/node.validator'
+
 
 export function validateWorkflow(
     nodes: GraphNode[],
@@ -87,24 +90,29 @@ export function validateWorkflow(
     }
 
 
-    // V5: Condition config validity
-    nodes.forEach(n => {
-        if (n.type === 'logic' && n.subType === 'condition') {
-            const config = n.data?.config
+    // // V5: Condition config validity
+    // nodes.forEach(n => {
+    //     if (n.type === 'logic' && n.subType === 'condition') {
+    //         const config = n.data?.config
 
-            if (
-                !config ||
-                config.left === undefined ||
-                config.right === undefined ||
-                !['==', '!=', '>', '<'].includes(config.operator)
-            ) {
-                errors.push({
-                    code: 'INVALID_CONDITION_CONFIG',
-                    message: 'Condition node has invalid or incomplete configuration',
-                    nodeId: n.id,
-                })
-            }
-        }
+    //         if (
+    //             !config ||
+    //             config.left === undefined ||
+    //             config.right === undefined ||
+    //             !['==', '!=', '>', '<'].includes(config.operator)
+    //         ) {
+    //             errors.push({
+    //                 code: 'INVALID_CONDITION_CONFIG',
+    //                 message: 'Condition node has invalid or incomplete configuration',
+    //                 nodeId: n.id,
+    //             })
+    //         }
+    //     }
+    // })
+
+    nodes.forEach(node => {
+        const nodeErrors = validateNodeConfig(node)
+        errors.push(...nodeErrors)
     })
 
     return {
