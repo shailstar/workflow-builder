@@ -3,8 +3,9 @@ import { beforeEach, vi } from 'vitest'
 
 // mock persistence
 vi.mock('@/utils/persistence', () => ({
-    saveWorkflow: vi.fn(),
+    autosaveWorkflow: vi.fn(),
     loadWorkflow: vi.fn(),
+    saveWorkflow: vi.fn(),
 }))
 
 beforeEach(() => {

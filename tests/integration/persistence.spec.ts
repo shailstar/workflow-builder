@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { useGraphStore } from '@/stores/graph.store'
-import { saveWorkflow } from '@/utils/persistence'
+import { autosaveWorkflow } from '@/utils/persistence'
 
 describe('Persistence', () => {
     it('persists workflow on changes', () => {
@@ -13,6 +13,6 @@ describe('Persistence', () => {
             data: { config: {} },
         })
 
-        expect(saveWorkflow).toHaveBeenCalled()
+        expect(autosaveWorkflow).toHaveBeenCalled()
     })
 })
