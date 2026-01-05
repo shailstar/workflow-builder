@@ -219,6 +219,17 @@ export const useGraphStore = defineStore('graph', {
             const history = useHistoryStore()
             history.redo()
             this.applySnapshot(history.present!)
+        },
+
+        applyStorageChanges(snapshot: { nodes: GraphNode[]; edges: GraphEdge[] }) {
+
+            snapshot.nodes.forEach(node => {
+                this.addNode(structuredClone(node))
+            })
+
+            snapshot.edges.forEach(edge => {
+                this.addEdge(structuredClone(edge))
+            })
         }
     },
 })

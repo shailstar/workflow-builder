@@ -48,10 +48,10 @@ function onKeydown(e: KeyboardEvent) {
 
 onMounted(() => {
   window.addEventListener('keydown', onKeydown)
-  // const snapshot = loadWorkflow()
-  // if (snapshot) {
-  //   graph.applySnapshot(snapshot)
-  // }
+  const snapshot = loadWorkflow()
+  if (snapshot) {
+    graph.applyStorageChanges(snapshot)
+  }
 })
 
 onUnmounted(() => {
