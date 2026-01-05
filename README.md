@@ -122,3 +122,26 @@ A **pure, side-effect-free** module.
 - Control Layer **processes intent**
 - Data Layer **updates state**
 - Snapshot is **persisted asynchronously**
+
+## State Shape
+
+State is managed using **Pinia** and is split into **focused stores**, each owning a single responsibility.  
+All stores are **snapshot-based** to support undo/redo, persistence, and deterministic execution.
+
+---
+
+## State Shape
+
+### Graph Store (Core Workflow State)
+
+Source of truth for the workflow graph.
+
+```ts
+{
+  nodes: GraphNode[]
+  edges: GraphEdge[]
+  selectedNodeId: string | null
+  selectedEdgeId: string | null
+}
+
+```
