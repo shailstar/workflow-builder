@@ -26,8 +26,8 @@
       "data": {
         "label": "Item In Stock?",
         "config": {
-          "left": "item.stock",
-          "operator": ">",
+          "left": "0",
+          "operator": "==",
           "right": "0"
         }
       }
@@ -76,7 +76,7 @@
         "config": {
           "left": "order.completed",
           "operator": "==",
-          "right": "false"
+          "right": "order.completed"
         }
       }
     },
